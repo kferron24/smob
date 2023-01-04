@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "237173902298",
+    "project_id": "smob-d151f",
+    "storage_bucket": "smob-d151f.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:237173902298:android:1c8d2adf7a0a16e5b34ee3",
+        "android_client_info": {
+          "package_name": "com.bm_app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "237173902298-m3vcfuj8dtakohooa97c6751ii1f4vo5.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC59yDEPmSmXcI4uLQ1yHo7S0X0PMSG2HU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "237173902298-m3vcfuj8dtakohooa97c6751ii1f4vo5.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
