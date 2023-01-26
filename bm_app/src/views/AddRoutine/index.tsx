@@ -11,11 +11,20 @@ import {
 import React, {useState} from 'react';
 
 import DateTimePicker from '@react-native-community/datetimepicker';
+import {GooglePlacesAutocomplete} from 'react-native-google-places-autocomplete';
+import {LogBox} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {addRoutine} from '../../helpers/firebase/addRoutine';
 import {colors} from '../colors';
 import {formatTime} from '../../helpers/format';
 import {styles} from './stylesAddRoutine';
+
+export type Adress = {
+  description: string;
+  lat: number | undefined;
+  lon: number | undefined;
+  department: string | undefined;
+};
 
 const AddRoutine = ({navigation}: any) => {
   const [name, setName] = useState<string | undefined>(undefined);
@@ -24,17 +33,19 @@ const AddRoutine = ({navigation}: any) => {
     time: string | undefined;
     timePicker: boolean;
   }>({time: undefined, timePicker: false});
-  console.log(hours);
-  const [departure, setDeparture] = useState<string | undefined>(undefined);
-  const [arrival, setArrival] = useState<string | undefined>(undefined);
+  const [departure, setDeparture] = useState<Adress | undefined>(undefined);
+  const [arrival, setArrival] = useState<Adress | undefined>(undefined);
 
   const handleAddRoutine = async () => {
     addRoutine(name, hours, departure, arrival, navigation, setLoading);
   };
 
+  // TODO Remove cause it hides errors but it was the only solution to the problem between googleautocomplete and ScrollView
+  LogBox.ignoreLogs(['VirtualizedLists should never be nested']); // TODO: Remove when fixed
+
   return (
     <SafeAreaView>
-      <ScrollView>
+      <ScrollView keyboardShouldPersistTaps="handled">
         <View style={styles.addRoutineHeader}>
           <TouchableOpacity
             onPress={() => {
@@ -47,7 +58,78 @@ const AddRoutine = ({navigation}: any) => {
           </TouchableOpacity>
           <Text style={styles.headerText}>Nouvelle Routine</Text>
         </View>
+
         <View style={styles.inputsView}>
+          <View style={styles.inputView}>
+            <Text style={styles.aboveText}>Départ</Text>
+            <GooglePlacesAutocomplete
+              placeholder="1 Av. du Dr Albert Schweitzer, 33400 Talence"
+              onPress={(data, details = null) => {
+                // 'details' is provided when fetchDetails = true
+                setDeparture({
+                  description: data.description,
+                  lat: details?.geometry.location.lat,
+                  lon: details?.geometry.location.lng,
+                  department: details?.address_components[3].long_name,
+                });
+              }}
+              query={{
+                key: 'GOOGLE API KEY',
+                language: 'fr',
+                components: 'country:fr',
+              }}
+              textInputProps={{
+                placeholderTextColor: 'rgba(52, 52, 76, 0.5)',
+              }}
+              numberOfLines={1}
+              disableScroll
+              styles={{
+                textInputContainer: styles.autocompleteInput,
+                textInput: styles.autoCompleteTextInput,
+                listView: styles.autocompleteListView,
+                description: styles.autocompleteDescription,
+                row: styles.autocompleteRow,
+              }}
+              enablePoweredByContainer={false}
+              listViewDisplayed={false}
+              keyboardShouldPersistTaps="handled"
+              fetchDetails
+            />
+          </View>
+          <View style={styles.inputView}>
+            <Text style={styles.aboveText}>Arrivée</Text>
+            <GooglePlacesAutocomplete
+              placeholder="1 Av. du Dr Albert Schweitzer, 33400 Talence"
+              onPress={(data, details = null) => {
+                // 'details' is provided when fetchDetails = true
+                setArrival({
+                  description: data.description,
+                  lat: details?.geometry.location.lat,
+                  lon: details?.geometry.location.lng,
+                  department: details?.address_components[3].long_name,
+                });
+              }}
+              query={{
+                key: 'GOOGLE API KEY',
+                language: 'fr',
+                components: 'country:fr',
+              }}
+              textInputProps={{
+                placeholderTextColor: 'rgba(52, 52, 76, 0.5)',
+              }}
+              numberOfLines={1}
+              disableScroll
+              styles={{
+                textInputContainer: styles.autocompleteInput,
+                textInput: styles.autoCompleteTextInput,
+                listView: styles.autocompleteListView,
+                description: styles.autocompleteDescription,
+                row: styles.autocompleteRow,
+              }}
+              enablePoweredByContainer={false}
+              fetchDetails
+            />
+          </View>
           <View style={styles.inputView}>
             <Text style={styles.aboveText}>Nom de la routine</Text>
             <TextInput
@@ -70,19 +152,14 @@ const AddRoutine = ({navigation}: any) => {
               </Text>
             </TouchableWithoutFeedback>
           </View>
+
           {hours.timePicker && (
             <DateTimePicker
               mode="time"
               display="clock"
               value={new Date()}
               onChange={value => {
-                console.log(value);
-
                 if (value.nativeEvent.timestamp) {
-                  console.log(
-                    new Date(value.nativeEvent.timestamp).getMinutes(),
-                  );
-
                   setHours({
                     time: formatTime(new Date(value.nativeEvent.timestamp)),
                     timePicker: false,
@@ -91,31 +168,7 @@ const AddRoutine = ({navigation}: any) => {
               }}
             />
           )}
-          <View style={styles.inputView}>
-            <Text style={styles.aboveText}>Départ</Text>
-            <TextInput
-              value={departure}
-              selectionColor={colors.ultraDark}
-              style={styles.input}
-              placeholder="1 Av. du Dr Albert Schweitzer, 33400 Talence"
-              placeholderTextColor={'rgba(52, 52, 76, 0.5)'}
-              maxLength={128}
-              onChangeText={value => setDeparture(value)}
-            />
-          </View>
-          <View style={styles.inputView}>
-            <Text style={styles.aboveText}>Arrivée</Text>
-            <TextInput
-              value={arrival}
-              selectionColor={colors.ultraDark}
-              style={styles.input}
-              placeholder="Cedex Esplanande Charles-de-Gaulle, 33000 Bordeaux"
-              placeholderTextColor={'rgba(52, 52, 76, 0.5)'}
-              maxLength={128}
-              underlineColorAndroid="transparent"
-              onChangeText={value => setArrival(value)}
-            />
-          </View>
+
           {loading ? (
             <ActivityIndicator size="small" color={colors.medium} />
           ) : (
@@ -127,9 +180,8 @@ const AddRoutine = ({navigation}: any) => {
           )}
         </View>
         <Text style={styles.adviceText}>
-          Les addresses doivent se trouver dans la métropole bordelaise et
-          écrites de la manière suivante : 1 Av du Dr Albert Swheitzer, 33400
-          Talence
+          Pour les adresses de Départ et d'Arrivée, n'oubliez pas que celles-ci
+          doivent se trouver dans la métropole bordelaise.
         </Text>
       </ScrollView>
     </SafeAreaView>

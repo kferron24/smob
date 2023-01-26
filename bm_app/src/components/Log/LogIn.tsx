@@ -51,7 +51,7 @@ const LogIn = (props: Props) => {
         }}>
         <Text style={styles.buttonText}>Se connecter</Text>
       </TouchableOpacity>
-      <Text style={styles.noSignUpText} onPress={() => console.log('SING UP')}>
+      <Text style={styles.noSignUpText}>
         Tu n'as pas encore de compte SMOB ?{' '}
         <Text style={styles.noSignUpButton} onPress={() => setSigned(false)}>
           Inscris toi !

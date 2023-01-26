@@ -1,4 +1,5 @@
-import {StyleSheet} from 'react-native';
+import {Dimensions, StyleSheet} from 'react-native';
+
 import {colors} from '../../views/colors';
 
 export const styles = StyleSheet.create({
@@ -50,6 +51,7 @@ export const styles = StyleSheet.create({
   },
   infosView: {
     backgroundColor: colors.flash,
+    height: Dimensions.get('window').height / 4,
   },
   infoTime: {
     marginHorizontal: 32,
@@ -88,11 +90,15 @@ export const styles = StyleSheet.create({
     width: 32,
     height: 32,
   },
+  mapView: {
+    alignSelf: 'center',
+    margin: 32,
+    width: '90%',
+    height: Dimensions.get('window').height / 4,
+    borderRadius: 20,
+    overflow: 'hidden',
+  },
   map: {
-    marginHorizontal: 32,
-    marginVertical: 16,
-    borderRadius: 10,
-    borderWidth: 8,
-    borderColor: colors.medium,
+    height: '100%',
   },
 });

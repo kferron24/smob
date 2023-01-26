@@ -31,7 +31,6 @@ export const getRoutines = async (
             msg: r.data().msg,
             id: r.id,
           });
-          console.log(r.data());
         });
         setRoutines(listRoutines.reverse());
       });

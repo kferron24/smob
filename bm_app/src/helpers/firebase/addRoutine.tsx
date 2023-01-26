@@ -1,6 +1,6 @@
+import {Adress} from '../../views/AddRoutine';
 import Snackbar from 'react-native-snackbar';
 import {colors} from '../../views/colors';
-import {fetchGeoApify} from '../../helpers/fetchGeoApify';
 import {firebase} from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
 
@@ -10,8 +10,8 @@ export const addRoutine = async (
     time: string | undefined;
     timePicker: boolean;
   },
-  departure: string | undefined,
-  arrival: string | undefined,
+  departure: Adress | undefined,
+  arrival: Adress | undefined,
   navigation: any,
   setLoading: (value: React.SetStateAction<boolean>) => void,
 ) => {
@@ -23,19 +23,15 @@ export const addRoutine = async (
     });
   } else {
     setLoading(true);
-    const [fetchResultDeparture, latDeparture, lonDeparture] =
-      await fetchGeoApify(departure);
-    const [fetchResultArrival, latArrival, lonArrival] = await fetchGeoApify(
-      arrival,
-    );
-    console.log('Protu', fetchResultArrival, fetchResultDeparture);
-    console.log('LAT:', latDeparture, lonDeparture, latArrival, lonArrival);
 
-    if (!fetchResultDeparture || !fetchResultArrival) {
+    if (
+      departure.department !== 'Gironde' ||
+      arrival.department !== 'Gironde'
+    ) {
       setLoading(false);
       Snackbar.dismiss();
       Snackbar.show({
-        text: "L'une de vos adresses n'est pas dans le bon format ou ne s'ouvre pas dans la métropole bordelaise.",
+        text: "L'une de vos adresses ne se trouve pas dans la métropole bordelaise ou dans le dapartement.",
         duration: Snackbar.LENGTH_SHORT,
         backgroundColor: colors.ultraDark,
       });
@@ -50,12 +46,12 @@ export const addRoutine = async (
           name,
           departureTime: '',
           arrivalTime: hours.time,
-          departure,
-          arrival,
-          latDeparture,
-          lonDeparture,
-          latArrival,
-          lonArrival,
+          departure: departure.description,
+          arrival: arrival.description,
+          latDeparture: departure.lat,
+          lonDeparture: departure.lon,
+          latArrival: arrival.lat,
+          lonArrival: arrival.lon,
           status: '',
           msg: '',
         })

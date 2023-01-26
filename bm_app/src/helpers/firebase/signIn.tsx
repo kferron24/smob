@@ -26,17 +26,11 @@ export const signIn = async (
             name: name,
             firstName: firstName,
           })
-          .then(() => {
-            console.log('User added!');
-          })
-          .catch(error => {
-            console.log(error);
-          });
+          .then(() => {});
         response = '';
         navigation.navigate('Board');
       })
       .catch(e => {
-        console.log(e.code);
         switch (e.code) {
           case 'auth/email-already-in-use':
             response = 'Cet email est déjà pris.';

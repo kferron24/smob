@@ -1,9 +1,14 @@
 import {Image, ScrollView, Text, TouchableOpacity, View} from 'react-native';
+import MapView, {Marker, PROVIDER_GOOGLE} from 'react-native-maps';
+import MapViewDirections, {
+  MapViewDirectionsDestination,
+  MapViewDirectionsOrigin,
+} from 'react-native-maps-directions';
 
-import {LeafletView} from 'react-native-leaflet-view';
 import React from 'react';
 import {Routine} from '../../helpers/type';
 import {SafeAreaView} from 'react-native-safe-area-context';
+import {colors} from '../../views/colors';
 import {deleteRoutine} from '../../helpers/firebase/addRoutine';
 import {format} from 'date-fns';
 import {fr} from 'date-fns/locale';
@@ -17,25 +22,25 @@ type Props = {
 
 const RoutineView = (props: Props) => {
   const {setRoutineToView, routineToView, getRoutinesAgain} = props;
-  console.log(routineToView.latArrival);
   const actualDate: string = format(new Date(), 'dd/MM/yy', {
     locale: fr,
   });
 
-  const getCircularReplacer = () => {
-    const seen = new WeakSet();
-    return (key, value) => {
-      if (typeof value === 'object' && value !== null) {
-        if (seen.has(value)) {
-          return;
+  const origin: MapViewDirectionsOrigin | undefined =
+    routineToView.latDeparture && routineToView.lonDeparture
+      ? {
+          latitude: Number(routineToView.latDeparture),
+          longitude: Number(routineToView.lonDeparture),
         }
-        seen.add(value);
-      }
-      return value;
-    };
-  };
+      : undefined;
 
-  console.log('Prout', Number(routineToView.latDeparture));
+  const destination: MapViewDirectionsDestination | undefined =
+    routineToView.latArrival && routineToView.lonArrival
+      ? {
+          latitude: Number(routineToView.latArrival),
+          longitude: Number(routineToView.lonArrival),
+        }
+      : undefined;
 
   return (
     <SafeAreaView style={styles.safearea}>
@@ -81,42 +86,46 @@ const RoutineView = (props: Props) => {
           </View>
           <Text style={styles.msg}>{routineToView.msg}</Text>
         </ScrollView>
-        <View style={styles.map}>
-          <LeafletView
-            mapCenterPosition={{lat: 44.837789, lng: -0.57918}}
-            zoom={10}
-            mapMarkers={[
-              {
-                position: {
-                  lat: Number(routineToView.latDeparture),
-                  lng: Number(routineToView.lonDeparture),
-                },
-                icon: 'Arrivée',
-                size: [10, 10],
+        <View style={styles.mapView}>
+          <MapView
+            style={styles.map}
+            provider={PROVIDER_GOOGLE}
+            showsUserLocation
+            initialCamera={{
+              center: {
+                latitude: origin ? origin.latitude : 44.837789,
+                longitude: origin ? origin.longitude : -0.57918,
               },
-              {
-                position: {
-                  lat: Number(routineToView.latArrival),
-                  lng: Number(routineToView.lonArrival),
-                },
-                icon: 'Départ',
-                size: [10, 10],
-              },
-            ]}
-          />
-          {/* Necessary cause of the webView, add space to display the web view of the leafmap */}
-          <Text> </Text>
-          <Text> </Text>
-          <Text> </Text>
-          <Text> </Text>
-          <Text> </Text>
-          <Text> </Text>
-          <Text> </Text>
-          <Text> </Text>
-          <Text> </Text>
-          <Text> </Text>
-          <Text> </Text>
-          <Text> </Text>
+              zoom: 14,
+              pitch: 20,
+              heading: 20,
+            }}
+            zoomEnabled
+            zoomControlEnabled>
+            {origin && (
+              <Marker
+                coordinate={origin}
+                title="Origin"
+                pinColor={colors.medium}
+              />
+            )}
+            {destination && (
+              <Marker
+                coordinate={destination}
+                title="Origin"
+                pinColor={colors.medium}
+              />
+            )}
+            {origin && destination && (
+              <MapViewDirections
+                origin={origin}
+                destination={destination}
+                apikey={'GOOGLE API KEY'}
+                strokeWidth={5}
+                strokeColor={colors.light}
+              />
+            )}
+          </MapView>
         </View>
         <TouchableOpacity
           style={styles.binButton}

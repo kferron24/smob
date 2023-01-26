@@ -22,7 +22,7 @@ export const styles = StyleSheet.create({
   inputsView: {
     marginHorizontal: 32,
     marginTop: 32,
-    marginBottom: 8,
+    marginBottom: 32,
   },
   inputView: {
     marginBottom: 12,
@@ -32,9 +32,40 @@ export const styles = StyleSheet.create({
     color: colors.medium,
     marginBottom: 8,
   },
+  autocompleteInput: {
+    borderColor: colors.dark,
+    borderWidth: 2,
+    backgroundColor: 'inherit',
+    borderRadius: 10,
+    paddingHorizontal: 8,
+    paddingTop: 8,
+  },
+  autoCompleteTextInput: {
+    fontSize: 28,
+    fontWeight: '400',
+    color: colors.ultraDark,
+    backgroundColor: 'inherit',
+  },
+  autocompleteRow: {
+    backgroundColor: 'inherit',
+  },
+  autocompleteListView: {
+    borderWidth: 1,
+    borderTopWidth: 0,
+    borderColor: colors.dark,
+    borderBottomLeftRadius: 10,
+    borderBottomRightRadius: 10,
+  },
+  autocompleteDescription: {
+    fontSize: 16,
+    color: colors.ultraDark,
+    fontWeight: '300',
+    paddingVertical: 8,
+  },
   input: {
     borderColor: colors.dark,
     borderWidth: 2,
+    backgroundColor: 'inherit',
     borderRadius: 10,
     fontSize: 28,
     fontWeight: '400',
@@ -78,6 +109,6 @@ export const styles = StyleSheet.create({
     color: colors.dark,
     fontWeight: '400',
     textAlign: 'justify',
-    marginHorizontal: 30,
+    margin: 32,
   },
 });

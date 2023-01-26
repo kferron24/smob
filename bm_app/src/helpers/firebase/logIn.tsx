@@ -18,8 +18,6 @@ export const logIn = async (
       .catch(e => {
         switch (e.code) {
           case 'auth/invalid-email':
-            console.log('oui');
-
             response = "L'email n'est pas valide.";
             break;
           case 'auth/user-not-found':

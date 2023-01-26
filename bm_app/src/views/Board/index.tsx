@@ -2,6 +2,7 @@ import {
   ActivityIndicator,
   Image,
   SafeAreaView,
+  ScrollView,
   Text,
   TouchableOpacity,
   View,
@@ -35,7 +36,6 @@ const Board = ({navigation}: any) => {
   }, [user, isFocused]);
 
   const logOut = () => {
-    console.log('Prout');
     auth().signOut;
 
     navigation.navigate('HomePage');
@@ -44,8 +44,6 @@ const Board = ({navigation}: any) => {
   const actualDate: string = format(new Date(), "'Routines du' eeee dd MMMM", {
     locale: fr,
   });
-  console.log(routines);
-  console.log(routinetoView);
 
   return (
     <SafeAreaView style={styles.safeArea}>
@@ -56,7 +54,7 @@ const Board = ({navigation}: any) => {
           getRoutinesAgain={getRoutinesAgain}
         />
       ) : (
-        <View>
+        <ScrollView>
           <Text style={styles.headerText}>Bordeaux, aujourd'hui</Text>
           <View style={styles.routinesView}>
             <Text style={styles.dateText}>{actualDate}</Text>
@@ -102,7 +100,7 @@ const Board = ({navigation}: any) => {
               source={require('../../../assets/logout.png')}
             />
           </TouchableOpacity>
-        </View>
+        </ScrollView>
       )}
     </SafeAreaView>
   );
